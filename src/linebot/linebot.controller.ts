@@ -26,9 +26,12 @@ export class LinebotController {
           );
           // insert user to db
           if (profiles.length === 0) {
-            profile = this.supabaseService.createProfile({
-              line_id: event.source.userId,
-              username: event.source.userId,
+            const lineUser = await this.configService
+              .createLinebotClient()
+              .getProfile(event.source.userId);
+            profile = await this.supabaseService.createProfile({
+              line_id: lineUser.userId,
+              username: lineUser.displayName,
             });
           } else {
             profile = profiles[0];
@@ -36,10 +39,14 @@ export class LinebotController {
         }
         if (event.message.type === 'text') {
           // save the message
-          await this.supabaseService.createMessage({
-            content: event.message.text,
-            profile_id: profile.id,
-          });
+          try {
+            await this.supabaseService.createMessage({
+              content: event.message.text,
+              profile_id: profile.id,
+            });
+          } catch (error) {
+            console.log(error);
+          }
         }
         // check the other user in other platform can be reached (followed our other bot or added other bot as friend)
 
