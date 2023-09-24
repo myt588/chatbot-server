@@ -5,7 +5,8 @@ import { ConfigService } from './config/config.service';
 import { SupabaseModule } from 'src/supabase/supabase.module';
 
 @Module({
+  imports: [SupabaseModule],
   controllers: [LinebotController],
-  providers: [LinebotService, ConfigService, SupabaseModule],
+  providers: [LinebotService, ConfigService],
 })
 export class LinebotModule {}

@@ -24,14 +24,27 @@ export class SupabaseService {
     return data;
   }
 
+  async getProfileByLineId(line_id: string) {
+    const { data, error } = await this.supabase
+      .from('profiles')
+      .select('*')
+      .eq('line_id', line_id);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
   async createProfile({
+    id = uuidv4(),
     username,
     line_id,
-  }: Database['public']['Tables']['profiles']['Insert']) {
-    const uuid = uuidv4();
+  }: Database['public']['Tables']['profiles']['Update']) {
     const { error } = await this.supabase
       .from('profiles')
-      .insert({ id: uuid, username, line_id });
+      .insert({ id, username, line_id });
 
     if (error) {
       throw error;
