@@ -11,6 +11,17 @@ export class LinebotController {
     const events: WebhookEvent[] = req.events;
     events.map((event) => {
       if (event.type === 'message') {
+        // check if it is an message to pass to another platform
+
+        // check if current user is already in db
+
+        // insert user to db
+
+        // check the other user in other platform can be reached (followed our other bot or added other bot as friend)
+
+        // find the correct user in db
+
+        // send the message with correct api
         const returnMessage =
           event.message.type === 'text'
             ? event.message.text
