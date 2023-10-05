@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { LinebotModule } from './linebot/linebot.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { DiscordModule } from '@discord-nestjs/core';
-import { GatewayIntentBits } from 'discord.js';
+import { GatewayIntentBits, Partials } from 'discord.js';
 import { DiscordBotModule } from './discordbot/discordbot.module';
 
 @Module({
@@ -27,6 +27,7 @@ import { DiscordBotModule } from './discordbot/discordbot.module';
             // https://support-dev.discord.com/hc/en-us/articles/4404772028055
             GatewayIntentBits.MessageContent,
           ],
+          partials: [Partials.Channel],
         },
       }),
       inject: [ConfigService],

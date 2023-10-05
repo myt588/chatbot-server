@@ -36,6 +36,9 @@ export class DiscordBotGateway {
   @UseGuards(MessageFromUserGuard)
   async onMessage(message: Message): Promise<void> {
     try {
+      this.logger.log(
+        `${message.author.username} just said ${message.content}`,
+      );
       let fromProfile: Database['public']['Tables']['profiles']['Update'];
       // check if current user is already in db
       const fromProfiles = await this.supabaseService.getProfileByDiscordId(
@@ -57,21 +60,23 @@ export class DiscordBotGateway {
       });
       // parse the message
       const parsedMessage = parseMessage(message.content);
-      // find the correct user
-      const toProfiles = await this.supabaseService.getProfileByUsername(
-        parsedMessage.name,
-      );
-      if (toProfiles.length > 0) {
-        const newMessage = assembleMessage(
-          fromProfile.username,
-          'Discord',
-          parsedMessage.message,
+      if (parsedMessage) {
+        // find the correct user
+        const toProfiles = await this.supabaseService.getProfileByUsername(
+          parsedMessage.name,
         );
-        // send message to user
-        await this.linebotSerivce.sendMessage(
-          toProfiles[0].line_id,
-          newMessage,
-        );
+        if (toProfiles.length > 0) {
+          const newMessage = assembleMessage(
+            fromProfile.username,
+            'Discord',
+            parsedMessage.message,
+          );
+          // send message to user
+          await this.linebotSerivce.sendMessage(
+            toProfiles[0].line_id,
+            newMessage,
+          );
+        }
       }
       // reply message
       await message.reply('understood');

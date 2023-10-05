@@ -49,21 +49,24 @@ export class LinebotController {
             });
             // parse the message
             const parsedMessage = parseMessage(event.message.text);
-            // find the correct user
-            const toProfiles = await this.supabaseService.getProfileByUsername(
-              parsedMessage.name,
-            );
-            if (toProfiles.length > 0) {
-              const newMessage = assembleMessage(
-                fromProfile.username,
-                'Line',
-                parsedMessage.message,
-              );
-              // send message to user
-              await this.discordBotService.sendMessage(
-                toProfiles[0].discord_id,
-                newMessage,
-              );
+            if (parsedMessage) {
+              // find the correct user
+              const toProfiles =
+                await this.supabaseService.getProfileByUsername(
+                  parsedMessage.name,
+                );
+              if (toProfiles.length > 0) {
+                const newMessage = assembleMessage(
+                  fromProfile.username,
+                  'Line',
+                  parsedMessage.message,
+                );
+                // send message to user
+                await this.discordBotService.sendMessage(
+                  toProfiles[0].discord_id,
+                  newMessage,
+                );
+              }
             }
           }
 
