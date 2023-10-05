@@ -38,17 +38,17 @@ export class DiscordBotGateway {
     try {
       let fromProfile: Database['public']['Tables']['profiles']['Update'];
       // check if current user is already in db
-      const profiles = await this.supabaseService.getProfileByDiscordId(
+      const fromProfiles = await this.supabaseService.getProfileByDiscordId(
         message.author.id,
       );
       // insert user to db
-      if (profiles.length === 0) {
+      if (fromProfiles.length === 0) {
         fromProfile = await this.supabaseService.createProfile({
           username: message.author.displayName,
           discord_id: message.author.id,
         });
       } else {
-        fromProfile = profiles[0];
+        fromProfile = fromProfiles[0];
       }
       // save the message
       await this.supabaseService.createMessage({
@@ -61,7 +61,7 @@ export class DiscordBotGateway {
       const toProfiles = await this.supabaseService.getProfileByUsername(
         parsedMessage.name,
       );
-      if (profiles.length > 0) {
+      if (toProfiles.length > 0) {
         const newMessage = assembleMessage(
           fromProfile.username,
           'Discord',
