@@ -1,5 +1,5 @@
 import { WebhookEvent, WebhookRequestBody } from '@line/bot-sdk';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ConfigService as NestConfigService } from './config/config.service';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { assembleMessage, parseMessage } from 'src/utils/message.parser';
@@ -7,6 +7,8 @@ import { DiscordBotService } from 'src/discordbot/discordbot.service';
 
 @Controller('linebot')
 export class LinebotController {
+  private readonly logger = new Logger(LinebotController.name);
+
   constructor(
     private configService: NestConfigService,
     private supabaseService: SupabaseService,
@@ -42,6 +44,9 @@ export class LinebotController {
             }
           }
           if (event.message.type === 'text') {
+            this.logger.log(
+              `${event.source.userId} just said ${event.message.text}`,
+            );
             // save the message
             await this.supabaseService.createMessage({
               content: event.message.text,
@@ -49,6 +54,9 @@ export class LinebotController {
             });
             // parse the message
             const parsedMessage = parseMessage(event.message.text);
+            // log parsed message
+            this.logger.log(parsedMessage);
+            // if message is valid
             if (parsedMessage) {
               // find the correct user
               const toProfiles =

@@ -60,6 +60,9 @@ export class DiscordBotGateway {
       });
       // parse the message
       const parsedMessage = parseMessage(message.content);
+      // log parsed message
+      this.logger.log(parsedMessage);
+      // if message is valid
       if (parsedMessage) {
         // find the correct user
         const toProfiles = await this.supabaseService.getProfileByUsername(
