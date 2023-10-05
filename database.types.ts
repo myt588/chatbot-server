@@ -40,30 +40,26 @@ export interface Database {
       profiles: {
         Row: {
           created_at: string;
+          discord_id: string | null;
           id: string;
           line_id: string | null;
           username: string;
         };
         Insert: {
           created_at?: string;
+          discord_id?: string | null;
           id: string;
           line_id?: string | null;
           username: string;
         };
         Update: {
           created_at?: string;
+          discord_id?: string | null;
           id?: string;
           line_id?: string | null;
           username?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'profiles_id_fkey';
-            columns: ['id'];
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
     };
     Views: {

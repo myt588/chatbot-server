@@ -37,14 +37,28 @@ export class SupabaseService {
     return data;
   }
 
+  async getProfileByDiscordId(discord_id: string) {
+    const { data, error } = await this.supabase
+      .from('profiles')
+      .select('*')
+      .eq('discord_id', discord_id);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
   async createProfile({
     id = uuidv4(),
     username,
     line_id,
+    discord_id,
   }: Database['public']['Tables']['profiles']['Update']) {
     const { error } = await this.supabase
       .from('profiles')
-      .insert({ id, username, line_id });
+      .insert({ id, username, line_id, discord_id });
 
     if (error) {
       throw error;
@@ -56,10 +70,11 @@ export class SupabaseService {
     id,
     username,
     line_id,
+    discord_id,
   }: Database['public']['Tables']['profiles']['Update']) {
     const { error } = await this.supabase
       .from('profiles')
-      .update({ username, line_id })
+      .update({ username, line_id, discord_id })
       .eq('id', id);
 
     if (error) {

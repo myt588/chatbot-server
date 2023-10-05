@@ -13,6 +13,6 @@ export class DiscordBotCollector {
 
   @Once('end')
   onEnd(): void {
-    this.logger.log('Quiz is over!');
+    this.logger.log('Message is over!');
   }
 }
