@@ -24,7 +24,24 @@ export class SupabaseService {
     return data;
   }
 
-  async getProfileByLineId(line_id: string) {
+  async getProfileByUsername(
+    username: string,
+  ): Promise<Array<Database['public']['Tables']['profiles']['Update']>> {
+    const { data, error } = await this.supabase
+      .from('profiles')
+      .select('*')
+      .eq('username', username);
+
+    if (error) {
+      throw error;
+    }
+
+    return data as Array<Database['public']['Tables']['profiles']['Update']>;
+  }
+
+  async getProfileByLineId(
+    line_id: string,
+  ): Promise<Array<Database['public']['Tables']['profiles']['Update']>> {
     const { data, error } = await this.supabase
       .from('profiles')
       .select('*')
@@ -34,10 +51,12 @@ export class SupabaseService {
       throw error;
     }
 
-    return data;
+    return data as Array<Database['public']['Tables']['profiles']['Update']>;
   }
 
-  async getProfileByDiscordId(discord_id: string) {
+  async getProfileByDiscordId(
+    discord_id: string,
+  ): Promise<Array<Database['public']['Tables']['profiles']['Update']>> {
     const { data, error } = await this.supabase
       .from('profiles')
       .select('*')
@@ -47,7 +66,7 @@ export class SupabaseService {
       throw error;
     }
 
-    return data;
+    return data as Array<Database['public']['Tables']['profiles']['Update']>;
   }
 
   async createProfile({
@@ -56,14 +75,14 @@ export class SupabaseService {
     line_id,
     discord_id,
   }: Database['public']['Tables']['profiles']['Update']) {
-    const { error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('profiles')
       .insert({ id, username, line_id, discord_id });
 
     if (error) {
       throw error;
     }
-    return true;
+    return data;
   }
 
   async updateProfile({

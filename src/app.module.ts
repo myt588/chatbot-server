@@ -6,7 +6,7 @@ import { LinebotModule } from './linebot/linebot.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { DiscordModule } from '@discord-nestjs/core';
 import { GatewayIntentBits } from 'discord.js';
-import { BotModule } from './discordbot/discordbot.module';
+import { DiscordBotModule } from './discordbot/discordbot.module';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { BotModule } from './discordbot/discordbot.module';
       inject: [ConfigService],
     }),
     SupabaseModule,
-    BotModule,
+    DiscordBotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

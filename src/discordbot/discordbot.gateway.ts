@@ -12,6 +12,9 @@ import { DiscordBotCollector } from './discordbot.collector';
 import { MessageFromUserGuard } from './guards/message-from-user.guard';
 import { QuizCommandGuard } from './guards/quiz-commnad.guard';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import { assembleMessage, parseMessage } from 'src/utils/message.parser';
+import { LinebotService } from 'src/linebot/linebot.service';
+import { Database } from 'database.types';
 
 @Injectable()
 export class DiscordBotGateway {
@@ -21,6 +24,7 @@ export class DiscordBotGateway {
     @InjectDiscordClient()
     private readonly client: Client,
     private supabaseService: SupabaseService,
+    private linebotSerivce: LinebotService,
   ) {}
 
   @Once('ready')
@@ -32,25 +36,43 @@ export class DiscordBotGateway {
   @UseGuards(MessageFromUserGuard)
   async onMessage(message: Message): Promise<void> {
     try {
-      let profile;
+      let fromProfile: Database['public']['Tables']['profiles']['Update'];
       // check if current user is already in db
       const profiles = await this.supabaseService.getProfileByDiscordId(
         message.author.id,
       );
       // insert user to db
       if (profiles.length === 0) {
-        profile = await this.supabaseService.createProfile({
+        fromProfile = await this.supabaseService.createProfile({
           username: message.author.displayName,
           discord_id: message.author.id,
         });
       } else {
-        profile = profiles[0];
+        fromProfile = profiles[0];
       }
       // save the message
       await this.supabaseService.createMessage({
         content: message.content,
-        profile_id: profile.id,
+        profile_id: fromProfile.id,
       });
+      // parse the message
+      const parsedMessage = parseMessage(message.content);
+      // find the correct user
+      const toProfiles = await this.supabaseService.getProfileByUsername(
+        parsedMessage.name,
+      );
+      if (profiles.length > 0) {
+        const newMessage = assembleMessage(
+          fromProfile.username,
+          'Discord',
+          parsedMessage.message,
+        );
+        // send message to user
+        await this.linebotSerivce.sendMessage(
+          toProfiles[0].line_id,
+          newMessage,
+        );
+      }
       // reply message
       await message.reply('understood');
     } catch (error) {

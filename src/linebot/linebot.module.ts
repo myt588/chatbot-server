@@ -8,5 +8,6 @@ import { SupabaseModule } from 'src/supabase/supabase.module';
   imports: [SupabaseModule],
   controllers: [LinebotController],
   providers: [LinebotService, ConfigService],
+  exports: [LinebotService],
 })
 export class LinebotModule {}
