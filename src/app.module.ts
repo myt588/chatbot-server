@@ -22,6 +22,7 @@ import { DiscordBotModule } from './discordbot/discordbot.module';
           intents: [
             GatewayIntentBits.Guilds,
             GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.DirectMessages,
             // You must allow message content for your application in discord developers
             // https://support-dev.discord.com/hc/en-us/articles/4404772028055
             GatewayIntentBits.MessageContent,
